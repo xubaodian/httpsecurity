@@ -19,7 +19,7 @@ public class UserController {
 
     //登录接口
     @PostMapping(value = "/login")
-    public @ResponseBody AjaxReult login(HttpServletRequest req, @Param("username") String username, @Param("password") String password) {
+    public @ResponseBody AjaxReult login(HttpServletRequest req, HttpServletResponse res, @Param("username") String username, @Param("password") String password) {
         //此处密码没加密，实际应用中密码一定要加密处理
         AjaxReult ajaxReult = new AjaxReult("", 1000, null);
         if ("admin".equals(username) && "123456".equals(password)) {
