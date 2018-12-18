@@ -5,6 +5,33 @@
     <title>单点登录测试</title>
 </head>
 <body>
+<h3>你好，你已经登录，该页面登录才能访问</h3>
+<button onclick="getShopList()">获取购物列表</button>
+<ul id="shop_list"></ul>
 <script src="./js/jquery.js"></script>
+<script>
+    function getShopList() {
+        $.ajax({
+            type: 'get',
+            url: '/shop/list',
+            dataType: 'json',
+            success: function (res) {
+                let ulDom = document.getElementById("shop_list");
+                if (res.code === 1000) {
+                    let innerHtml = "";
+                    res.object.map(item => {
+                        innerHtml += "<li>" + item.name + " * " + item.count + "</li>";
+                    });
+                    ulDom.innerHTML = innerHtml;
+                } else {
+                    ulDom.innerHTML = "未登录"
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        })
+    }
+</script>
 </body>
 </html>

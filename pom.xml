@@ -65,6 +65,13 @@
             <artifactId>lettuce-core</artifactId>
             <version>5.1.3.RELEASE</version>
         </dependency>
+
+        <!--json 处理包-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.4</version>
+        </dependency>
         <!-- <dependency>
              <groupId>org.springframework.boot</groupId>
              <artifactId>spring-boot-starter-security</artifactId>

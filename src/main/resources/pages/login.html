@@ -10,12 +10,17 @@
 <div><input type="text" placeholder="用户名" id="username"></div>
 <div><input type="password" placeholder="密码" id="password"></div>
 <div><button id="submit" onclick="login()">登录</button></div>
+
+<div style="margin-top: 50px">
+    <button onclick="getShopList()">获取购物列表测试</button>
+    <ul id="shop_list"></ul>
+</div>
 <script>
     function login() {
-        let name = $('username').value;
-        let password = $('password').value;
+        let username = $('#username').val();
+        let password = $('#password').val();
         let params = {
-            name,
+            username,
             password
         };
         $.ajax({
@@ -24,7 +29,32 @@
             dataType: 'json',
             data: params,
             success: function (res) {
-                console.log(res);
+                if (res.code === 1000) {
+                    location.href = res.object;
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        })
+    }
+
+    function getShopList() {
+        $.ajax({
+            type: 'get',
+            url: '/shop/list',
+            dataType: 'json',
+            success: function (res) {
+                let ulDom = document.getElementById("shop_list");
+                if (res.code === 1000) {
+                    let innerHtml = "";
+                    res.object.map(item => {
+                        innerHtml += "<li>" + item.name + " * " + item.count + "</li>";
+                    });
+                    ulDom.innerHTML = innerHtml;
+                } else {
+                    ulDom.innerHTML = "未登录"
+                }
             },
             error: function (err) {
                 console.error(err);
