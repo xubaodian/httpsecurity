@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 @WebFilter(filterName="CustomFilter",urlPatterns="/*")
 public class LogonFilter implements Filter {
 
+    //不拦截url列表
     private static final String [] ignoreUrls = {"/login", "/js/"};
 
     @Override
