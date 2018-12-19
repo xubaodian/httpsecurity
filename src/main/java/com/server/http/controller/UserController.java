@@ -23,6 +23,7 @@ public class UserController {
         //此处密码没加密，实际应用中密码一定要加密处理
         AjaxReult ajaxReult = new AjaxReult("", 1000, null);
         if ("admin".equals(username) && "123456".equals(password)) {
+            //这个值token可以采用常用方法生成，然后加密处理，这里就不展示了（例如jwt等等）
             req.getSession().setAttribute("token", "thisistest");
             ajaxReult.setObject("/index");
         } else {

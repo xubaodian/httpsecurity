@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -44,8 +45,7 @@ public class HttpApplicationTests {
     }*/
     @Test
     public void exampleTest() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get("/shop/list")).andExpect(status().isOk())
-                .andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(get("/shop/list")).andReturn();
         String res = mvcResult.getResponse().getContentAsString();
         Cookie[] cookies = mvcResult.getResponse().getCookies();
         for (Cookie item : cookies) {

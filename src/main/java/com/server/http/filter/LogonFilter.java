@@ -37,6 +37,7 @@ public class LogonFilter implements Filter {
 
         HttpSession session = ((HttpServletRequest) request).getSession();
         Object token = session.getAttribute("token");
+        //这个值token应该采用比较通用的方法生成，然后加密处理
         if (null != token && "thisistest".equals(token.toString())) {
             //登录的
             chain.doFilter(request, response);
