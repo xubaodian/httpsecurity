@@ -9,6 +9,7 @@ import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
 @SpringBootApplication
+//添加这个注解，过滤器才能生效
 @ServletComponentScan
 public class HttpApplication {
 
@@ -20,8 +21,11 @@ public class HttpApplication {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        //客户端session 名称
         serializer.setCookieName("token"); // <1>
+        //路径
         serializer.setCookiePath("/"); // <2>
+        //设置cookie有效域
         serializer.setDomainNamePattern("^.+?\\.(\\w+\\.[a-z]+)$"); // <3>
         return serializer;
     }

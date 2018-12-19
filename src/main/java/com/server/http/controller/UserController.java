@@ -23,10 +23,11 @@ public class UserController {
         //此处密码没加密，实际应用中密码一定要加密处理
         AjaxReult ajaxReult = new AjaxReult("", 1000, null);
         if ("admin".equals(username) && "123456".equals(password)) {
-            //这个值token可以采用常用方法生成，然后加密处理，这里就不展示了（例如jwt等等）
+            //登录成功用户，发放token。这个值token可以采用常用方法生成，然后加密处理，这里就不展示了（例如jwt等等）
             req.getSession().setAttribute("token", "thisistest");
             ajaxReult.setObject("/index");
         } else {
+            //登录失败，返回错误信息
             ajaxReult.setCode(1001);
             ajaxReult.setMessage("用户名或密码错误");
         }
@@ -36,6 +37,7 @@ public class UserController {
     //退出接口
     @GetMapping(value = "logout")
     public @ResponseBody AjaxReult logout(HttpSession httpSession, HttpServletResponse res) throws IOException {
+        //使session失效
         httpSession.invalidate();
         AjaxReult ajaxReult = new AjaxReult("", 1000, null);
         res.sendRedirect("/logout");
