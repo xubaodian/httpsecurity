@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>单点登录测试</title>
+</head>
+<body>
+<h3 th:text="'你好,' + ${username}"></h3>
+<button onclick="getScoreList()">获取成绩列表</button>
+<ul id="shop_list"></ul>
+<div style="margin-top: 30px;">
+    <div>姓名：<input type="text" id="username"></div>
+    <div>成绩： <input type="text" id="score"></div>
+    <button onclick="modify()">修改</button>
+</div>
+<div style="margin-top: 50px">
+    <button onclick="logout()">退出登录</button>
+</div>
+<script src="./js/jquery.js"></script>
+<script>
+    function getScoreList() {
+        $.ajax({
+            type: 'get',
+            url: '/score/list',
+            dataType: 'json',
+            success: function (res) {
+                let ulDom = document.getElementById("shop_list");
+                if (res.code === 1000) {
+                    let innerHtml = "";
+                    res.object.map(item => {
+                        innerHtml += `<li>${item.name}: ${item.subject} * ${item.count}</li>`;
+                    });
+                    ulDom.innerHTML = innerHtml;
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        })
+    }
+    function modify() {
+        let name = $('#username').val();
+        let score = $('#score').val();
+        let params = {
+            name,
+            score
+        };
+        $.ajax({
+            type: 'put',
+            url: '/score/modify',
+            dataType: 'json',
+            data: params,
+            success: function (res) {
+                if (res.code === 1000) {
+                    getScoreList();
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        })
+    }
+    function logout() {
+        $.ajax({
+            type: 'get',
+            url: '/user/logout',
+            success: function (res) {
+                location.reload();
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        })
+    }
+</script>
+</body>
+</html>

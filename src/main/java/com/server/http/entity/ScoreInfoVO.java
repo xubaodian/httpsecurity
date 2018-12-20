@@ -1,12 +1,13 @@
 package com.server.http.entity;
 
-public class ShopInfoVO {
+public class ScoreInfoVO {
     private String name;
-
+    private String subject;
     private int count;
 
-    public ShopInfoVO(String name, int count) {
+    public ScoreInfoVO(String name,String subject, int count) {
         this.name = name;
+        this.subject = subject;
         this.count = count;
     }
 
@@ -24,5 +25,13 @@ public class ShopInfoVO {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 }

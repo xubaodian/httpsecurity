@@ -7,8 +7,11 @@ import jdk.nashorn.internal.parser.JSONParser;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 //过滤器，拦截请求，
@@ -16,7 +19,19 @@ import java.util.regex.Pattern;
 public class LogonFilter implements Filter {
 
     //不拦截url列表
-    private static final String [] ignoreUrls = {"/login", "/js/"};
+    private static final String [] ignoreUrls = {"/login", "/js/", "/logout"};
+
+    //接口权限保存地址，可存储在数据库中，从数据库中读取
+    private static final Map<String, String> interfaceAccess= new HashMap<>();
+
+    /***
+     * 访问/score/list接口，access权限字符串需包含01，
+     * 访问/score/modify接口，access权限字符串需包含02
+     */
+    static {
+        interfaceAccess.put("/score/list", "01");
+        interfaceAccess.put("/score/modify", "02");
+    }
 
     //过滤器初始化钩子函数
     @Override
@@ -37,22 +52,39 @@ public class LogonFilter implements Filter {
                 return;
             }
         }
-
+        //这一块是登录验证
         //拦截请求，未登录的直接返回需登录。
         HttpSession session = ((HttpServletRequest) request).getSession();
+        //获取token
         Object token = session.getAttribute("token");
-        //验证token，这个值token应该采用比较通用的方法生成，然后加密处理，本例中简单处理
+        //权限字符串
+        Object access = session.getAttribute("access");
+        //验证token，判断是否登录
         if (null != token && "thisistest".equals(token.toString())) {
-            //登录的
-            chain.doFilter(request, response);
-            return;
+            //这是权限验证，验证access，判断登录用户是否有访问该接口的权限，可以使用两个filter实例来分别操作，本例中放在一个里
+            //访问接口所需的权限
+            Object requireAuth = interfaceAccess.get(path);
+            //requireAuth为null,代表不需权限验证，登录用户直接放行
+            if (null != requireAuth) {
+                //需要权限接口，且具有权限
+                if (access != null && access.toString().indexOf(requireAuth.toString()) > -1) {
+                    chain.doFilter(request, response);
+                    return;
+                } else {
+                    //不具备权限
+                    AjaxReult ajaxReult = new AjaxReult("系统无权限访问", 1005, null);
+                    response.setContentType("application/json;charset=utf-8");
+                    response.getWriter().write(JSON.toJSONString(ajaxReult));
+                    response.getWriter().close();
+                    return;
+                }
+            } else {
+                //无需权限接口
+                chain.doFilter(request, response);
+                return;
+            }
         } else {
-            AjaxReult ajaxReult = new AjaxReult("", 1000, null);
-            ajaxReult.setCode(1005);
-            ajaxReult.setMessage("请先登录");
-            response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(ajaxReult));
-            response.getWriter().close();
+            ((HttpServletResponse)response).sendRedirect("/login");
         }
     }
 
